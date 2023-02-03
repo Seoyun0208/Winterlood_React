@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 
-const DiaryEditor = () => {
+const DiaryEditor = ({ onCreate }) => {
 
     const [state, setState] = useState({
         author: '',
@@ -24,11 +24,15 @@ const DiaryEditor = () => {
             contentTextarea.current.focus();
             return;
         }
-    }
 
-    useEffect(() => {
-        console.log(state);
-    }, [state]);
+        onCreate(state.author, state.content, state.emotion);
+        alert('저장 성공');
+        setState({
+            author: '',
+            content: '',
+            emotion: 1
+        });
+    }
 
     return (
         <div className='DiaryEditor'>
