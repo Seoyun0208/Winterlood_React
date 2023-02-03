@@ -1,0 +1,46 @@
+.DiaryEditor {
+    border: 1px solid grey;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+
+    .wrapper {
+        width: 80%;
+
+        div {
+            width: 100%;
+
+            &:nth-child(4) {
+                text-align: right;
+            }
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+        }
+
+        input {
+            margin-top: 20px;
+        }
+
+        textarea {
+            height: 150px;
+        }
+
+        select {
+            width: 10%;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            cursor: pointer;
+        }
+    }
+}
