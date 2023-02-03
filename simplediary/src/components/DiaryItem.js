@@ -1,6 +1,6 @@
 import React from 'react';
 
-const DiaryItem = ({ id, author, content, emotion, created_date }) => {
+const DiaryItem = ({ id, author, content, emotion, created_date, onDelete }) => {
     return (
         <div className='DiaryItem'>
             <div className="info">
@@ -9,6 +9,7 @@ const DiaryItem = ({ id, author, content, emotion, created_date }) => {
                 <span className='date'>{new Date(created_date).toLocaleString()}</span>
             </div>
             <div className='content'>{content}</div>
+            <button onClick={() => onDelete(id)}>삭제</button>
         </div>
     );
 };
