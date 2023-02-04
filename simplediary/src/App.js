@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useReducer } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useReducer } from 'react';
 import './App.scss';
 import DiaryEditor from './components/DiaryEditor';
 import DiaryList from './components/DiaryList';
@@ -28,9 +28,10 @@ const reducer = (state, action) => {
   }
 }
 
-function App() {
+export const DiaryStateContext = React.createContext();
+export const DiaryDispatchContext = React.createContext();
 
-  // const [data, setData] = useState([]);
+function App() {
 
   const [data, dispatch] = useReducer(reducer, []);
 
@@ -48,7 +49,6 @@ function App() {
       }
     });
     dispatch({ type: 'INIT', data: initData });
-    // setData(initData);
   }
 
   useEffect(() => {
@@ -57,22 +57,19 @@ function App() {
 
   const onCreate = useCallback((author, content, emotion) => {
     dispatch({ type: 'CREATE', data: { author, content, emotion, id: dataId.current } });
-    // const created_date = new Date().getTime();
-    // const newItem = {
-    //   author, content, emotion, created_date, id: dataId.current
-    // };
     dataId.current += 1;
-    // setData((data) => [ newItem, ...data ]);
   }, []);
 
   const onSave = useCallback((targetId, newContent) => {
     dispatch({ type: 'SAVE', targetId, newContent });
-    // setData(data => data.map(diary => diary.id === targetId ? { ...diary, content: newContent } : diary));
   }, []);
 
   const onRemove = useCallback((targetId) => {
     dispatch({ type: 'REMOVE', targetId });
-    // setData(data => data.filter(diary => diary.id !== targetId));
+  }, []);
+
+  const memoizedDispatches = useMemo(() => {
+    return { onCreate, onRemove, onSave };
   }, []);
 
   const getDiaryAnalysis = useMemo(() => {
@@ -87,18 +84,22 @@ function App() {
   const { goodCount, badCount, goodRatio } = getDiaryAnalysis;
 
   return (
-    <div className="App">
-      {/* <Lifecycle /> */}
-      {/* <Lifecycle2 /> */}
-      {/* <OptimizeTest /> */}
-      {/* <OptimizeTest2 /> */}
-      <DiaryEditor onCreate={onCreate} />
-      <div>전체: {data.length}</div>
-      <div>기분 날씨 맑음: {goodCount}</div>
-      <div>기분 날씨 흐림: {badCount}</div>
-      <div>기분 날씨 맑은 날 비율: {goodRatio}%</div>
-      <DiaryList diaryList={data} onRemove={onRemove} onSave={onSave} />
-    </div>
+    <DiaryStateContext.Provider value={data}>
+      <DiaryDispatchContext.Provider value={memoizedDispatches}>
+        <div className="App">
+          {/* <Lifecycle /> */}
+          {/* <Lifecycle2 /> */}
+          {/* <OptimizeTest /> */}
+          {/* <OptimizeTest2 /> */}
+          <DiaryEditor />
+          <div>전체: {data.length}</div>
+          <div>기분 날씨 맑음: {goodCount}</div>
+          <div>기분 날씨 흐림: {badCount}</div>
+          <div>기분 날씨 맑은 날 비율: {goodRatio}%</div>
+          <DiaryList />
+        </div>
+      </DiaryDispatchContext.Provider>
+    </DiaryStateContext.Provider>
   );
 }
 
