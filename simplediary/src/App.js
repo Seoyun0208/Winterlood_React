@@ -4,6 +4,8 @@ import DiaryEditor from './components/DiaryEditor';
 import DiaryList from './components/DiaryList';
 // import Lifecycle from './components/Lifecycle/Lifecycle';
 // import Lifecycle2 from './components/Lifecycle/Lifecycle2';
+// import OptimizeTest from './components/optimizeTest/OptimizeTest'; 
+import OptimizeTest2 from './components/optimizeTest/OptimizeTest2';
 
 // https://jsonplaceholder.typicode.com/comments
 
@@ -51,7 +53,6 @@ function App() {
   }
 
   const getDiaryAnalysis = useMemo(() => {
-    console.log('일기 분석 시작');
 
     const goodCount = data.filter(diary => diary.emotion >= 3).length;
     const badCount = data.length - goodCount;
@@ -66,6 +67,8 @@ function App() {
     <div className="App">
       {/* <Lifecycle /> */}
       {/* <Lifecycle2 /> */}
+      {/* <OptimizeTest /> */}
+      <OptimizeTest2 />
       <DiaryEditor onCreate={onCreate} />
       <div>전체: {data.length}</div>
       <div>기분 날씨 맑음: {goodCount}</div>
