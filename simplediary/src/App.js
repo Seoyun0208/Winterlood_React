@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './App.scss';
 import DiaryEditor from './components/DiaryEditor';
 import DiaryList from './components/DiaryList';
 // import Lifecycle from './components/Lifecycle/Lifecycle';
 // import Lifecycle2 from './components/Lifecycle/Lifecycle2';
 // import OptimizeTest from './components/optimizeTest/OptimizeTest'; 
-import OptimizeTest2 from './components/optimizeTest/OptimizeTest2';
+// import OptimizeTest2 from './components/optimizeTest/OptimizeTest2';
 
 // https://jsonplaceholder.typicode.com/comments
 
@@ -32,14 +32,14 @@ function App() {
     getData();
   }, []);
 
-  const onCreate = (author, content, emotion) => {
+  const onCreate = useCallback((author, content, emotion) => {
     const created_date = new Date().getTime();
     const newItem = {
       author, content, emotion, created_date, id: dataId.current
     };
     dataId.current += 1;
-    setData([...data, newItem]);
-  }
+    setData((data) => [...data, newItem]);
+  }, []);
 
   const onSave = (targetId, newContent) => {
     setData(
@@ -68,7 +68,7 @@ function App() {
       {/* <Lifecycle /> */}
       {/* <Lifecycle2 /> */}
       {/* <OptimizeTest /> */}
-      <OptimizeTest2 />
+      {/* <OptimizeTest2 /> */}
       <DiaryEditor onCreate={onCreate} />
       <div>전체: {data.length}</div>
       <div>기분 날씨 맑음: {goodCount}</div>
