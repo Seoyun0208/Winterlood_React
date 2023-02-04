@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useReducer } from 'react';
 import './App.scss';
 import DiaryEditor from './components/DiaryEditor';
 import DiaryList from './components/DiaryList';
@@ -9,9 +9,31 @@ import DiaryList from './components/DiaryList';
 
 // https://jsonplaceholder.typicode.com/comments
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'INIT': {
+      return action.data;
+    }
+    case 'CREATE': {
+      const created_date = new Date().getTime();
+      const newItem = { ...action.data, created_date };
+      return [newItem, ...state];
+    }
+    case 'SAVE':
+      return state.map(diary => diary.id === action.targetId ? { ...diary, content: action.newContent } : diary);
+    case 'REMOVE':
+      return state.filter(diary => diary.id !== action.targetId);
+    default:
+      return state;
+  }
+}
+
 function App() {
 
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
+
+  const [data, dispatch] = useReducer(reducer, []);
+
   const dataId = useRef(0);
 
   const getData = async () => {
@@ -25,7 +47,8 @@ function App() {
         created_date: new Date().getTime()
       }
     });
-    setData(initData);
+    dispatch({ type: 'INIT', data: initData });
+    // setData(initData);
   }
 
   useEffect(() => {
@@ -33,20 +56,23 @@ function App() {
   }, []);
 
   const onCreate = useCallback((author, content, emotion) => {
-    const created_date = new Date().getTime();
-    const newItem = {
-      author, content, emotion, created_date, id: dataId.current
-    };
+    dispatch({ type: 'CREATE', data: { author, content, emotion, id: dataId.current } });
+    // const created_date = new Date().getTime();
+    // const newItem = {
+    //   author, content, emotion, created_date, id: dataId.current
+    // };
     dataId.current += 1;
-    setData((data) => [...data, newItem]);
+    // setData((data) => [ newItem, ...data ]);
   }, []);
 
   const onSave = useCallback((targetId, newContent) => {
-    setData(data => data.map(diary => diary.id === targetId ? { ...diary, content: newContent } : diary));
+    dispatch({ type: 'SAVE', targetId, newContent });
+    // setData(data => data.map(diary => diary.id === targetId ? { ...diary, content: newContent } : diary));
   }, []);
 
   const onRemove = useCallback((targetId) => {
-    setData(data => data.filter(diary => diary.id !== targetId));
+    dispatch({ type: 'REMOVE', targetId });
+    // setData(data => data.filter(diary => diary.id !== targetId));
   }, []);
 
   const getDiaryAnalysis = useMemo(() => {
