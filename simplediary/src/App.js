@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './App.scss';
 import DiaryEditor from './components/DiaryEditor';
 import DiaryList from './components/DiaryList';
 // import Lifecycle from './components/Lifecycle/Lifecycle';
 // import Lifecycle2 from './components/Lifecycle/Lifecycle2';
-
 
 // https://jsonplaceholder.typicode.com/comments
 
@@ -51,11 +50,27 @@ function App() {
     setData(newDiaryList);
   }
 
+  const getDiaryAnalysis = useMemo(() => {
+    console.log('일기 분석 시작');
+
+    const goodCount = data.filter(diary => diary.emotion >= 3).length;
+    const badCount = data.length - goodCount;
+    const goodRatio = (goodCount / data.length) * 100;
+
+    return { goodCount, badCount, goodRatio };
+  }, [data.length]);
+
+  const { goodCount, badCount, goodRatio } = getDiaryAnalysis;
+
   return (
     <div className="App">
       {/* <Lifecycle /> */}
       {/* <Lifecycle2 /> */}
       <DiaryEditor onCreate={onCreate} />
+      <div>전체: {data.length}</div>
+      <div>기분 날씨 맑음: {goodCount}</div>
+      <div>기분 날씨 흐림: {badCount}</div>
+      <div>기분 날씨 맑은 날 비율: {goodRatio}%</div>
       <DiaryList diaryList={data} onRemove={onRemove} onSave={onSave} />
     </div>
   );
