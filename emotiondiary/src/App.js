@@ -5,7 +5,7 @@ import Edit from './pages/Edit';
 import New from './pages/New';
 import Diary from './pages/Diary';
 import NotFound from './pages/NotFound';
-import React, { useReducer, useRef } from 'react';
+import React, { useEffect, useReducer, useRef } from 'react';
 
 const reducer = (state, action) => {
   let newState = [];
@@ -28,44 +28,27 @@ const reducer = (state, action) => {
     default:
       return state;
   }
+  localStorage.setItem('diary', JSON.stringify(newState));
   return newState;
 };
 
 export const DiaryStateContext = React.createContext();
 export const DiaryDispatchContext = React.createContext();
 
-const dummyData = [
-  {
-    id: 1,
-    emotion: 1,
-    content: '오늘의 일기는...1',
-    date: 1675572413723,
-  },
-  {
-    id: 2,
-    emotion: 3,
-    content: '오늘의 일기는...2',
-    date: 1675572413724,
-  },
-  {
-    id: 3,
-    emotion: 4,
-    content: '오늘의 일기는...3',
-    date: 1675572413725,
-  },
-  {
-    id: 4,
-    emotion: 5,
-    content: '오늘의 일기는...4',
-    date: 1675572413728,
-  },
-];
-
 function App() {
 
-  const [data, dispatch] = useReducer(reducer, dummyData);
+  useEffect(() => {
+    const localData = localStorage.getItem('diary');
+    if (localData) {
+      const diaryList = JSON.parse(localData).sort((a, b) => parseInt(b.id) - parseInt(a.id));
+      dataId.current = parseInt(diaryList[0].id) + 1;
+      dispatch({ type: 'INIT', data: diaryList })
+    }
+  }, []);
 
-  const dataId = useRef(5);
+  const [data, dispatch] = useReducer(reducer, []);
+
+  const dataId = useRef(0);
 
   // CREATE
   const onCreate = (date, content, emotion) => {
