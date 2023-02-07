@@ -6,6 +6,11 @@ import DiaryList from '../components/DiaryList';
 
 const Home = () => {
 
+    useEffect(() => {
+        const titleEl = document.getElementsByTagName('title')[0];
+        titleEl.innerHTML = `감정 일기장`
+    }, []);
+
     const diaryList = useContext(DiaryStateContext);
 
     const [data, setData] = useState([]);
